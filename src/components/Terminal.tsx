@@ -3,6 +3,8 @@ import { useState, useRef, useEffect } from "react";
 import { usePathname, useRouter } from 'next/navigation';
 import { parseCommand } from "../utils/commandParser";
 
+import type { ReactNode } from "react";
+
 export default function Home() {
   const [input, setInput] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
@@ -11,7 +13,9 @@ export default function Home() {
    // 這裡呼叫 usePathname
   const router = useRouter();
   const pathname = usePathname();
-  const [history, setHistory] = useState<{ cmd: string, output: any }[]>([]);
+  const [history, setHistory] = useState<
+    { cmd: string; output: ReactNode }[]
+  >([]);
 
   const getPromptPath = (pathname: string) => {
     if (pathname === "/") return "C:/";
