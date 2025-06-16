@@ -1,7 +1,5 @@
-{/*愛崴崴孟孟 */}
-
 "use client";
-
+{/*愛崴崴孟孟 */}
 import { useState, useRef, useEffect } from "react";
 import { usePathname, useRouter } from 'next/navigation';
 import { parseCommand } from "../utils/commandParser";
