@@ -21,6 +21,10 @@ export default function Home() {
   const promptPath = getPromptPath(pathname);
 
   useEffect(() => {
+    inputRef.current?.focus({ preventScroll: true });
+  }, []);
+
+  useEffect(() => {
     const onClick = () => inputRef.current?.focus({ preventScroll: true });
     document.addEventListener("click", onClick);
     return () => document.removeEventListener("click", onClick);
