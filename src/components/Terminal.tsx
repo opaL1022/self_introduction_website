@@ -6,7 +6,8 @@ import { usePathname } from 'next/navigation';
 export default function Home() {
   const [input, setInput] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
-  const fakeInputRef = useRef<HTMLDivElement>(null);
+  const [history, setHistory] = useState<string[]>([]);
+  const endRef = useRef<HTMLDivElement>(null);
 
    // 這裡呼叫 usePathname
   const pathname = usePathname();
@@ -19,19 +20,24 @@ export default function Home() {
   const promptPath = getPromptPath(pathname);
 
   useEffect(() => {
-    const handleClick = () => {
-      inputRef.current?.focus();
-    };
-    const el = fakeInputRef.current;
-    if (el) {
-      el.addEventListener("click", handleClick);
-      return () => el.removeEventListener("click", handleClick);
-    }
+    const onClick = () => inputRef.current?.focus({ preventScroll: true });
+    document.addEventListener("click", onClick);
+    return () => document.removeEventListener("click", onClick);
   }, []);
+
+  useEffect(() => {
+    if (history.length > 0) {
+      window.scrollTo({
+        top: document.body.scrollHeight,
+        behavior: 'auto',
+      });
+    }
+  }, [history]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       console.log("User entered command:", input);
+      setHistory(prev => [...prev, input]);
       setInput("");
     }
   };
@@ -45,17 +51,16 @@ export default function Home() {
       padding: 0,
       display: 'flex',
       flexDirection: 'column' as const,
+      cursor: 'text',
+      userSelect: 'text' as const,
     },
     terminalOutput: {
-//      flex: 1,
       overflowY: 'auto' as const,
       marginBottom: 0,
     },
     row: {
       display: 'flex',
       alignItems: 'center',
-      cursor: 'text',
-      userSelect: 'text' as const,
     },
     prompt: {
       marginRight: 8,
@@ -82,11 +87,8 @@ export default function Home() {
       marginLeft: 1,
     },
     realInput: {
-      position: 'absolute' as const,
       opacity: 0,
       pointerEvents: 'none' as const,
-      left: 0,
-      top: 0,
       width: 1,
       height: 1,
     },
@@ -107,23 +109,36 @@ export default function Home() {
     return () => { document.head.removeChild(style); };
   }, []);
 
+  const focusInput = () => {
+    inputRef.current?.focus({ preventScroll: true });
+  };
+
   return (
-    <div style={styles.root}>
+    <div style={styles.root} onClick={focusInput}>
       <div id="terminal-output" style={styles.terminalOutput}>
         <p>[version 1.0.0] <span style={styles.gray}>Welcome to our website!</span></p>
         <p>Type <span style={styles.white}>help</span> to list commands.</p>
       </div>
+
+      {history.map((cmd, i) => (
+          <div key={i} style={styles.row}>
+            <span style={styles.prompt}>{promptPath}&gt;</span>
+            <span>{cmd}</span>
+          </div>
+        ))}
+
+      <div ref={endRef} />
       <div style={styles.row}>
         <span style={styles.prompt}>{promptPath}&gt;_</span>
         {/* 假輸入框 */}
-        <div
-          ref={fakeInputRef}
+        <span
           style={styles.fakeInput}
-          tabIndex={0}
+          onClick={() => inputRef.current?.focus({ preventScroll: true })}
         >
           {input}
-          <span style={styles.blink}></span>
-        </div>
+          <span style={styles.blink} />
+        </span>
+
         {/* 隱藏的真正 input */}
         <input
           ref={inputRef}
@@ -133,7 +148,7 @@ export default function Home() {
           onKeyDown={handleKeyDown}
           style={styles.realInput}
           tabIndex={-1}
-          autoFocus
+          // autoFocus
         />
       </div>
     </div>
