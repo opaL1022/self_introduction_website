@@ -110,8 +110,8 @@ export default function Home() {
   return (
     <div style={styles.root}>
       <div id="terminal-output" style={styles.terminalOutput}>
-        <p>[version 1.0.0] <span style={styles.gray}>Welcome to the terminal!</span></p>
-        <p>Welcome! Type <span style={styles.white}>help</span> to list commands.</p>
+        <p>[version 1.0.0] <span style={styles.gray}>Welcome to our website!</span></p>
+        <p>Type <span style={styles.white}>help</span> to list commands.</p>
       </div>
       <div style={styles.row}>
         <span style={styles.prompt}>{promptPath}&gt;_</span>
