@@ -1,15 +1,16 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import { parseCommand } from "../utils/commandParser";
 
 export default function Home() {
   const [input, setInput] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
   const fakeInputRef = useRef<HTMLDivElement>(null);
-
-   // 這裡呼叫 usePathname
+  const router = useRouter();
   const pathname = usePathname();
+  const [history, setHistory] = useState<{ cmd: string, output: any }[]>([]);
 
   const getPromptPath = (pathname: string) => {
     if (pathname === "/") return "C:/";
@@ -32,6 +33,12 @@ export default function Home() {
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       console.log("User entered command:", input);
+      const result = parseCommand(input);
+      setHistory([...history, { cmd: input, output: result.output }]);
+      if (result.redirectTo) {
+        router.push(result.redirectTo);
+      }
+
       setInput("");
     }
   };
@@ -112,6 +119,15 @@ export default function Home() {
       <div id="terminal-output" style={styles.terminalOutput}>
         <p>[version 1.0.0] <span style={styles.gray}>Welcome to our website!</span></p>
         <p>Type <span style={styles.white}>help</span> to list commands.</p>
+        {history.map((h, i) => (
+          <div key={i}>
+            <div style={styles.row}>
+              <span style={styles.prompt}>{promptPath}&gt;_</span>
+              <span>{h.cmd}</span>
+            </div>
+            <div style={{ marginLeft: 32 }}>{h.output}</div>
+          </div>
+        ))}
       </div>
       <div style={styles.row}>
         <span style={styles.prompt}>{promptPath}&gt;_</span>
