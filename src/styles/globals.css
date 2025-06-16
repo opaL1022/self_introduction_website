@@ -1,0 +1,20 @@
+/* src/styles/globals.css */
+
+/* 1. 宣告字型 */
+@font-face {
+  font-family: "RasterFont";
+  src: url("/fonts/raster.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* 2. 關閉字型平滑，讓像素邊緣保持銳利 */
+body {
+  font-family: "RasterFont", monospace;
+  -webkit-font-smoothing: none;
+  -moz-osx-font-smoothing: grayscale;
+  
+   /* 新增：全站黑底、白字 */
+  background-color: #000;
+  color: #fff;
+}
