@@ -140,7 +140,7 @@ export default function Home() {
   );
 }
 
-function getPromptPath(pathname: string) {
-  if (pathname === "/") return "C:/";
-  return `C:${pathname}`;
-}
+// function getPromptPath(pathname: string) {
+//   if (pathname === "/") return "C:/";
+//   return `C:${pathname}`;
+// }
