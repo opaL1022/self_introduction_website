@@ -87,12 +87,12 @@ export default function Home() {
     root: {
       minHeight: '100vh',
       background: 'black',
-      color: '#22d066',
       padding: 0,
       display: 'flex',
       flexDirection: 'column' as const,
       cursor: 'text',
       userSelect: 'text' as const,
+      wordSpacing: '0.5em'
     },
     terminalOutput: {
       overflowY: 'auto' as const,
@@ -110,8 +110,7 @@ export default function Home() {
       minHeight: '1.5em',
       outline: 'none',
       background: 'transparent',
-      color: '#22d066',
-      caretColor: '#22d066',
+      caretColor: '#fff',
       whiteSpace: 'pre',
       cursor: 'text',
       display: 'inline-block',
@@ -121,7 +120,7 @@ export default function Home() {
       display: 'inline-block',
       width: 8,
       height: '1em',
-      background: '#22d066',
+      background: '#fff',
       verticalAlign: 'bottom',
       animation: 'blink-cursor 1s steps(2, start) infinite',
       marginLeft: 1,
@@ -134,7 +133,6 @@ export default function Home() {
     },
     output: {
       marginLeft: 32,
-      color: '#22d066',
       whiteSpace: 'pre-wrap',
       lineHeight: 1.4,
     },
