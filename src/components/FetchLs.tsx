@@ -10,7 +10,6 @@ export default function FetchLs({ pathStack, target }: FetchLsProps) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // 計算 query path
     let base = pathStack.join("/") || "";
     if (!base.startsWith("/")) base = "/" + base;
     

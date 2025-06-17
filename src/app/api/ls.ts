@@ -8,11 +8,9 @@ export default async function handler(
   res: NextApiResponse<string[] | { error: string }>
 ) {
   try {
-    // 讀 client 端傳來的路徑，例如 "/about/sub"
     const rel = Array.isArray(req.query.path)
       ? req.query.path.join("/")
       : (req.query.path as string) || "";
-    // 指向 public 下相對路徑
     const dir = path.join(process.cwd(), "public", rel);
     const entries = await fs.readdir(dir, { withFileTypes: true });
     const names = entries.map((d) =>

@@ -8,10 +8,10 @@ export default function Home() {
   const [pathStack, setPathStack] = useState<string[]>(['']);
   const promptPath = 'C:' + pathStack.join('/');
   const [input, setInput] = useState("");
+  const [cursorPos, setCursorPos] = useState(0);   
   const inputRef = useRef<HTMLInputElement>(null);
   const endRef = useRef<HTMLDivElement>(null);
 
-   // 這裡呼叫 usePathname
   const [history, setHistory] = useState<
     { path: string; cmd: string; output: ReactNode }[]
   >([]);
@@ -61,6 +61,7 @@ export default function Home() {
       }
 
       setInput("");
+      setCursorPos(0);
     }
     else if (e.key === "ArrowUp") {
       e.preventDefault();
@@ -69,6 +70,9 @@ export default function Home() {
         historyIndex === null ? history.length - 1 : Math.max(0, historyIndex - 1);
       setHistoryIndex(nextIndex);
       setInput(history[nextIndex].cmd);
+      setCursorPos((historyIndex !== null ? 
+         history[historyIndex]?.cmd.length : input.length) || 0);
+      e.preventDefault();
     }
     else if (e.key === "ArrowDown") {
       e.preventDefault();
@@ -78,9 +82,22 @@ export default function Home() {
         historyIndex + 1 >= history.length ? null : historyIndex + 1;
       setHistoryIndex(nextIndex);
       setInput(nextIndex === null ? "" : history[nextIndex].cmd);
+      setCursorPos((historyIndex !== null ? 
+         history[historyIndex]?.cmd.length : input.length) || 0);
+      e.preventDefault();
+    }
+    else if (e.key === "ArrowLeft") {
+      e.preventDefault();
+      setCursorPos((pos) => Math.max(0, pos - 1));
+      // 同步 real input 光标
+      inputRef.current?.setSelectionRange(cursorPos - 1, cursorPos - 1);
+    }
+    else if (e.key === "ArrowRight") {
+      e.preventDefault();
+      setCursorPos((pos) => Math.min(input.length, pos + 1));
+      inputRef.current?.setSelectionRange(cursorPos + 1, cursorPos + 1);
     }
   };
-
 
   // CSS 設定
   const styles = {
@@ -92,7 +109,6 @@ export default function Home() {
       flexDirection: 'column' as const,
       cursor: 'text',
       userSelect: 'text' as const,
-      wordSpacing: '0.5em'
     },
     terminalOutput: {
       overflowY: 'auto' as const,
@@ -116,14 +132,21 @@ export default function Home() {
       display: 'inline-block',
       position: 'relative' as const,
     },
+    cursorBox: {
+    position: 'relative' as const,
+    display: 'inline-block' as const,
+    width: '1ch',
+    },
+
     blink: {
-      display: 'inline-block',
-      width: 8,
-      height: '1em',
-      background: '#fff',
-      verticalAlign: 'bottom',
-      animation: 'blink-cursor 1s steps(2, start) infinite',
-      marginLeft: 1,
+      position: 'absolute' as const,
+      top: 0,
+      right: 0,
+      bottom: 0,
+      left: 0,
+      background: 'rgba(255,255,255,.5)',
+      animation: 'blink-cursor 1s steps(2,start) infinite',
+      pointerEvents: 'none' as const,
     },
     realInput: {
       opacity: 0,
@@ -140,7 +163,7 @@ export default function Home() {
     white: { color: '#fff' },
   };
 
-  // 注入 blink 動畫
+  // blink animation
   useEffect(() => {
     const style = document.createElement('style');
     style.innerHTML = `
@@ -153,8 +176,16 @@ export default function Home() {
     return () => { document.head.removeChild(style); };
   }, []);
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInput(e.target.value);
+    // record cursor position
+    const pos = e.target.selectionStart ?? e.target.value.length;
+    setCursorPos(pos);
+  };
+
   const focusInput = () => {
     inputRef.current?.focus({ preventScroll: true });
+    inputRef.current?.setSelectionRange(cursorPos, cursorPos);
   };
 
   return (
@@ -175,21 +206,29 @@ export default function Home() {
       <div ref={endRef} />
       <div style={styles.row}>
         <span style={styles.prompt}>{promptPath}&gt;_</span>
-        {/* 假輸入框 */}
-        <span
-          style={styles.fakeInput}
-          onClick={() => inputRef.current?.focus({ preventScroll: true })}
-        >
-          {input}
-          <span style={styles.blink} />
+          {/* fake input */}
+          <span style={styles.fakeInput} onClick={focusInput}>
+            {/* left text */}
+            {input.slice(0, cursorPos)}
+
+            {/* current character and cursor */}
+            <span style={styles.cursorBox}>
+              {input[cursorPos] ?? ' ' /* &nbsp; 佔位 */}
+            <span style={styles.blink} />
+          </span>
+
+          {/* right text */}
+          {input.slice(cursorPos + 1) || '\u200b'}
         </span>
 
-        {/* 隱藏的真正 input */}
+
+
+        {/* hide input */}
         <input
           ref={inputRef}
           type="text"
           value={input}
-          onChange={e => setInput(e.target.value)}
+          onChange={handleChange}
           onKeyDown={handleKeyDown}
           style={styles.realInput}
           tabIndex={-1}

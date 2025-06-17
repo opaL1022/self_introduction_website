@@ -20,7 +20,6 @@ export default function FetchTextFile({ filePath }: { filePath: string }) {
   if (error) return <div style={{ marginLeft: 32 }}>{error}</div>;
   if (content === null) return <div style={{ marginLeft: 32 }}>Loading...</div>;
 
-  // 每行检查是否是 "Label: URL" 格式
   const lineRegex = /^([^:]+):\s*(https?:\/\/\S+)\s*$/i;
 
   return (
@@ -28,7 +27,7 @@ export default function FetchTextFile({ filePath }: { filePath: string }) {
       style={{
         marginLeft: 32,
         fontFamily: "monospace",
-        color: "#22d066",
+        color: "#fff",
         whiteSpace: "pre-wrap",
         lineHeight: 1.4,
       }}
@@ -39,12 +38,11 @@ export default function FetchTextFile({ filePath }: { filePath: string }) {
           const [, label, url] = match;
           return (
             <React.Fragment key={idx}>
-              {/* 只显示 Label，Label 可点击 */}
               <a
                 href={url}
                 target="_blank"
                 rel="noopener noreferrer"
-                style={{ color: "#22d066", textDecoration: "underline" }}
+                style={{ color: "#fff", textDecoration: "underline" }}
               >
                 {label}
               </a>
@@ -52,7 +50,6 @@ export default function FetchTextFile({ filePath }: { filePath: string }) {
             </React.Fragment>
           );
         } else {
-          // 普通行
           return (
             <React.Fragment key={idx}>
               {line}
