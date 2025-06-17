@@ -27,7 +27,8 @@ export async function parseCommand(
             <div><span className="text-white">cat filename.txt</span> - Show the content of a text file under current route (ex: <span className="text-white">cat about.txt</span>)</div>
             <div><span className="text-white">clear</span> / <span className="text-white">cls</span> - Clear the terminal screen</div>
             <div><span className="text-white">ls</span> - List all available files and subroutes under current route</div>
-            <div><span className="text-white">green</span> / <span className="text-white">white</span> - Switch theme color</div>
+            <div><span className="text-white">green</span> - H4ck3r 5TylE</div>
+            <div><span className="text-white">white</span> - Set theme color to white</div>
           </div>
         )
       };

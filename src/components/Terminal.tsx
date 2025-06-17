@@ -11,7 +11,7 @@ export default function Home() {
   const [cursorPos, setCursorPos] = useState(0);   
   const inputRef = useRef<HTMLInputElement>(null);
   const endRef = useRef<HTMLDivElement>(null);
-   const [colorMode, setColorMode] = useState<"white" | "green">("white");
+  const [colorMode, setColorMode] = useState<"white" | "green">("white");
 
   const [history, setHistory] = useState<
     { path: string; cmd: string; output: ReactNode }[]
