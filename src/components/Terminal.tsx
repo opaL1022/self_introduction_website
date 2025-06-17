@@ -12,7 +12,8 @@ export default function Home() {
   const inputRef = useRef<HTMLInputElement>(null);
   const endRef = useRef<HTMLDivElement>(null);
   const [colorMode, setColorMode] = useState<"white" | "green">("white");
-
+  const colorMap = { white: "#fff", green: "#22d066" };
+  const textColor = colorMap[colorMode];
   const [history, setHistory] = useState<
     { path: string; cmd: string; output: ReactNode }[]
   >([]);
@@ -43,7 +44,7 @@ export default function Home() {
     }
   }, [history]);
 
-  const textColor = getComputedStyle(document.body).getPropertyValue("--main-text-color") || "#fff";
+//  const textColor = getComputedStyle(document.body).getPropertyValue("--main-text-color") || "#fff";
 
   const handleKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
@@ -120,7 +121,7 @@ export default function Home() {
   };
 
   // CSS setting
-  const styles = {
+const getStyles = (tc: string) => ({
     root: {
       minHeight: '100vh',
       background: 'black',
@@ -146,7 +147,7 @@ export default function Home() {
       minHeight: '1.5em',
       outline: 'none',
       background: 'transparent',
-      caretColor: textColor,
+      caretColor: tc ,
       whiteSpace: 'pre',
       cursor: 'text',
       display: 'inline-block',
@@ -180,10 +181,11 @@ export default function Home() {
       lineHeight: 1.4,
     },
     gray: { color: '#888' },
-    white: { color: textColor },
+    white: { color: tc  },
     realWhite: { color: "#fff" },
-  };
-
+  });
+  const styles = getStyles(textColor);
+  
   // blink animation
   useEffect(() => {
     const style = document.createElement('style');
