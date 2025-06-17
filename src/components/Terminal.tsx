@@ -16,6 +16,8 @@ export default function Home() {
     { path: string; cmd: string; output: ReactNode }[]
   >([]);
 
+  const [historyIndex, setHistoryIndex] = useState<number | null>(null);
+
   useEffect(() => {
     inputRef.current?.focus({ preventScroll: true });
   }, []);
@@ -37,6 +39,7 @@ export default function Home() {
 
   const handleKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
+        setHistoryIndex(null);
         const result = parseCommand(input, pathStack);
         setHistory((h) => [
           ...h,
@@ -48,6 +51,23 @@ export default function Home() {
       }
 
       setInput("");
+    }
+    else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      if (history.length === 0) return;
+      const nextIndex =
+        historyIndex === null ? history.length - 1 : Math.max(0, historyIndex - 1);
+      setHistoryIndex(nextIndex);
+      setInput(history[nextIndex].cmd);
+    }
+    else if (e.key === "ArrowDown") {
+      e.preventDefault();
+      if (history.length === 0) return;
+      if (historyIndex === null) return;
+      const nextIndex =
+        historyIndex + 1 >= history.length ? null : historyIndex + 1;
+      setHistoryIndex(nextIndex);
+      setInput(nextIndex === null ? "" : history[nextIndex].cmd);
     }
   };
 
