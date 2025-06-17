@@ -102,6 +102,12 @@ export default function Home() {
       width: 1,
       height: 1,
     },
+    output: {
+      marginLeft: 32,
+      color: '#22d066',
+      whiteSpace: 'pre-wrap',
+      lineHeight: 1.4,
+    },
     gray: { color: '#888' },
     white: { color: '#fff' },
   };
@@ -134,7 +140,7 @@ export default function Home() {
               <span style={styles.prompt}>{h.path}&gt;_</span>
               <span>{h.cmd}</span>
             </div>
-            <div style={{ marginLeft: 32 }}>{h.output}</div>
+            <div style={styles.output}>{h.output}</div>
           </div>
         ))}
       </div>

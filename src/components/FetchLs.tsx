@@ -36,8 +36,8 @@ export default function FetchLs({ pathStack, target }: FetchLsProps) {
   if (items === null) return <div>Loading...</div>;
 
   return (
-    <pre style={{ whiteSpace: 'pre-wrap', marginLeft: 32 }}>
+    <div style={{ whiteSpace: 'pre-wrap', marginLeft: 32 }}>
       {items.join("   ")}
-    </pre>
+    </div>
   );
 }

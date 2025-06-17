@@ -23,5 +23,5 @@ export default function FetchTextFile({
 
   if (error) return <div>{error}</div>;
   if (content === null) return <div>Loading...</div>;
-  return <pre>{content}</pre>;
+  return <div>{content}</div>;
 }
