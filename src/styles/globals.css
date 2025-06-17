@@ -11,7 +11,13 @@ body {
   font-family: "RasterFont", monospace;
   -webkit-font-smoothing: none;
   -moz-osx-font-smoothing: grayscale;
-  
+
   background-color: #000;
-  color: #fff;
+
+  /* ↓↓↓ 全域文字顏色交由 CSS 變數控制 ↓↓↓ */
+  --main-text-color: #fff;          /* default white */
+  color: var(--main-text-color);
 }
+
+body.theme-green  { --main-text-color: #22d066; }
+body.theme-white  { --main-text-color: #fff; }   /* 可省，保險起見留著 */

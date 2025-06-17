@@ -11,6 +11,7 @@ export default function Home() {
   const [cursorPos, setCursorPos] = useState(0);   
   const inputRef = useRef<HTMLInputElement>(null);
   const endRef = useRef<HTMLDivElement>(null);
+   const [colorMode, setColorMode] = useState<"white" | "green">("white");
 
   const [history, setHistory] = useState<
     { path: string; cmd: string; output: ReactNode }[]
@@ -21,6 +22,11 @@ export default function Home() {
   useEffect(() => {
     inputRef.current?.focus({ preventScroll: true });
   }, []);
+
+  useEffect(() => {
+    document.body.classList.remove("theme-green", "theme-white");
+    document.body.classList.add(`theme-${colorMode}`);
+  }, [colorMode]);
 
   useEffect(() => {
     const onClick = () => inputRef.current?.focus({ preventScroll: true });
@@ -37,6 +43,8 @@ export default function Home() {
     }
   }, [history]);
 
+  const textColor = getComputedStyle(document.body).getPropertyValue("--main-text-color") || "#fff";
+
   const handleKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
         setHistoryIndex(null);
@@ -45,6 +53,8 @@ export default function Home() {
           ...h,
           { path: promptPath, cmd: input, output: result.output },
         ]);
+
+        if (result.newColorMode) setColorMode(result.newColorMode);
 
         if (result.newPathStack) {
         setPathStack(result.newPathStack);
@@ -136,7 +146,7 @@ export default function Home() {
       minHeight: '1.5em',
       outline: 'none',
       background: 'transparent',
-      caretColor: '#fff',
+      caretColor: textColor,
       whiteSpace: 'pre',
       cursor: 'text',
       display: 'inline-block',
@@ -170,7 +180,8 @@ export default function Home() {
       lineHeight: 1.4,
     },
     gray: { color: '#888' },
-    white: { color: '#fff' },
+    white: { color: textColor },
+    realWhite: { color: "#fff" },
   };
 
   // blink animation
@@ -202,7 +213,7 @@ export default function Home() {
     <div style={styles.root} onClick={focusInput}>
       <div id="terminal-output" style={styles.terminalOutput}>
         <p>[version 1.0.0] <span style={styles.gray}>Welcome to our website!</span></p>
-        <p>Type <span style={styles.white}>help</span> to list commands.</p>
+        <p>Type <span style={styles.realWhite}>help</span> to list commands.</p>
         {history.map((h, i) => (
           <div key={i}>
             <div style={styles.row}>
