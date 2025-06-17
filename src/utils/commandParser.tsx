@@ -9,10 +9,10 @@ export interface CommandResult {
 
 
 
-export function parseCommand(
+export async function parseCommand(
   input: string,
   currentPathStack: string[]
-): CommandResult {
+): Promise<CommandResult> {
   const [cmd, ...args] = input.trim().split(/\s+/);
 
   switch (cmd) {
@@ -34,7 +34,8 @@ export function parseCommand(
         return { output: "Usage: cd [path]" };
       }
       const target = args[0];
-      // 建立 newStack 的邏輯（支援 ../, ./, 絕對 /, 相對）
+
+      // 先算出新的堆栈
       let newStack: string[];
       if (target.startsWith("/")) {
         // 絕對路徑
@@ -54,8 +55,18 @@ export function parseCommand(
           }
         }
       }
+
+      // 拼 API query path
+      const rel = newStack.join("/").replace(/^\/+/, "");
+      const res = await fetch(`/api/ls?path=${encodeURIComponent(rel)}`);
+
+      if (!res.ok) {
+        return {
+          output: `Directory not found: ${target}`,
+        };
+      }
       return {
-        output: `Switched to ${newStack.join("/") || "/"}`,
+        output: `Switched to ${"/" + rel || "/"}`,
         newPathStack: newStack,
       };
     }

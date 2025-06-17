@@ -25,7 +25,7 @@ export default function FetchLs({ pathStack, target }: FetchLsProps) {
 
     fetch(`/api/ls?path=${encodeURIComponent(queryPath)}`)
       .then((res) => {
-        if (!res.ok) throw new Error("Cannot list directory");
+        if (!res.ok) throw new Error("Directory not found");
         return res.json() as Promise<string[]>;
       })
       .then(setItems)
