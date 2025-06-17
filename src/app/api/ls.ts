@@ -19,7 +19,13 @@ export default async function handler(
       d.isDirectory() ? d.name + "/" : d.name
     );
     res.status(200).json(names);
-  } catch (e: any) {
-    res.status(400).json({ error: e.message });
+  } catch (e: unknown) {
+    const msg =
+      e instanceof Error
+        ? e.message
+        : typeof e === "string"
+        ? e
+        : "Unknown error";
+    res.status(400).json({ error: `Cannot list directory: ${msg}` });
   }
 }

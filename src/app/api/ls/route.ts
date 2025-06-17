@@ -21,9 +21,15 @@ export async function GET(request: Request) {
 
     const names = entries.map((d) => (d.isDirectory() ? d.name + "/" : d.name));
     return NextResponse.json(names);
-  } catch (e: any) {
+  } catch (e: unknown) {
+    const msg =
+      e instanceof Error
+        ? e.message
+        : typeof e === "string"
+        ? e
+        : "Unknown error";
     return NextResponse.json(
-      { error: "Cannot list directory: " + e.message },
+      { error: `Cannot list directory: ${msg}` },
       { status: 400 }
     );
   }

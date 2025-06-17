@@ -13,7 +13,7 @@ export default function Home() {
 
    // 這裡呼叫 usePathname
   const [history, setHistory] = useState<
-    { path: String; cmd: string; output: ReactNode }[]
+    { path: string; cmd: string; output: ReactNode }[]
   >([]);
 
   useEffect(() => {
