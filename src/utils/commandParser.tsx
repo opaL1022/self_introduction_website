@@ -35,16 +35,13 @@ export async function parseCommand(
       }
       const target = args[0];
 
-      // 先算出新的堆栈
       let newStack: string[];
       if (target.startsWith("/")) {
-        // 絕對路徑
         const segs = target.split("/").filter(Boolean);
         newStack = [""].concat(segs);
       } else if (target === "" || target === "/") {
         newStack = [""];
       } else {
-        // 複合相對
         newStack = [...currentPathStack];
         for (const seg of target.split("/")) {
           if (!seg || seg === ".") continue;
@@ -56,7 +53,6 @@ export async function parseCommand(
         }
       }
 
-      // 拼 API query path
       const rel = newStack.join("/").replace(/^\/+/, "");
       const res = await fetch(`/api/ls?path=${encodeURIComponent(rel)}`);
 
@@ -77,12 +73,9 @@ export async function parseCommand(
       }
       const filename = args[0];
 
-      // 用 currentPathStack（函式引入的）来计算当前目录
       const dirPath = currentPathStack.join("/");      // e.g. '' or 'about/team'
-      // 规范成 '/about/team' 或根目录 '/'
       const normalizedDir =
         dirPath === "" ? "/" : "/" + dirPath.replace(/^\/+/, "");
-      // 拼出 API 参数里要传的相对路径：去掉开头多余的 '/'
       const apiPath = `${normalizedDir}/${filename}`.replace(/^\/+/, "");
 
       return {
@@ -93,7 +86,6 @@ export async function parseCommand(
         ),
       };
     }
-
 
     case "ls": {
       const target = args[0] || ".";
@@ -108,7 +100,6 @@ export async function parseCommand(
     }
     case "clear":
   case "cls": {
-    // 通知父元件清空 terminal
     return { output: "", newPathStack: currentPathStack };
   }
     default:

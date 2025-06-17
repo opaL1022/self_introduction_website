@@ -23,15 +23,7 @@ export default function FetchTextFile({ filePath }: { filePath: string }) {
   const lineRegex = /^([^:]+):\s*(https?:\/\/\S+)\s*$/i;
 
   return (
-    <div
-      style={{
-        marginLeft: 32,
-        fontFamily: "monospace",
-        color: "#fff",
-        whiteSpace: "pre-wrap",
-        lineHeight: 1.4,
-      }}
-    >
+    <div style={{ whiteSpace: 'pre-wrap', marginLeft: 32 }}>
       {content.split("\n").map((line, idx, arr) => {
         const match = line.match(lineRegex);
         if (match) {
