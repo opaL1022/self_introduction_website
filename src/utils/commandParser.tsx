@@ -24,6 +24,7 @@ export function parseCommand(
             <div><span className="text-white">help</span> - Show command lists</div>
             <div><span className="text-white">cd route</span> - Switch pages (ex: <span className="text-white">cd /about</span>)</div>
             <div><span className="text-white">cat filename.txt</span> - Show the content of a text file under current route (ex: <span className="text-white">cat about.txt</span>)</div>
+            <div><span className="text-white">clear</span> / <span className="text-white">cls</span> - Clear the terminal screen</div>
           </div>
         )
       };
@@ -94,7 +95,11 @@ export function parseCommand(
         )
       };
     }
-
+    case "clear":
+  case "cls": {
+    // 通知父元件清空 terminal
+    return { output: "", newPathStack: currentPathStack };
+  }
     default:
       return { output: `Command not found: ${cmd}` };
   }

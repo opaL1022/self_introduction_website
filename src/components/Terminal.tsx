@@ -48,6 +48,16 @@ export default function Home() {
 
         if (result.newPathStack) {
         setPathStack(result.newPathStack);
+
+        if (
+          (input.trim() === "clear" || input.trim() === "cls") && result.output === ""
+          ) {
+            setHistory([]);
+            setPathStack(['']);
+            setInput("");
+            return;
+          }
+
       }
 
       setInput("");
