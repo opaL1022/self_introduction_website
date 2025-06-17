@@ -66,30 +66,40 @@ export default function Home() {
     else if (e.key === "ArrowUp") {
       e.preventDefault();
       if (history.length === 0) return;
+
       const nextIndex =
         historyIndex === null ? history.length - 1 : Math.max(0, historyIndex - 1);
+
+      const cmd = history[nextIndex].cmd;
+
       setHistoryIndex(nextIndex);
-      setInput(history[nextIndex].cmd);
-      setCursorPos((historyIndex !== null ? 
-         history[historyIndex]?.cmd.length : input.length) || 0);
-      e.preventDefault();
+      setInput(cmd);
+      setCursorPos(cmd.length);
+
+      setTimeout(() => {
+        inputRef.current?.setSelectionRange(cmd.length, cmd.length);
+      }, 0);
     }
     else if (e.key === "ArrowDown") {
       e.preventDefault();
-      if (history.length === 0) return;
-      if (historyIndex === null) return;
+      if (history.length === 0 || historyIndex === null) return;
+
       const nextIndex =
         historyIndex + 1 >= history.length ? null : historyIndex + 1;
+
+      const cmd = nextIndex === null ? "" : history[nextIndex].cmd;
+
       setHistoryIndex(nextIndex);
-      setInput(nextIndex === null ? "" : history[nextIndex].cmd);
-      setCursorPos((historyIndex !== null ? 
-         history[historyIndex]?.cmd.length : input.length) || 0);
-      e.preventDefault();
+      setInput(cmd);
+      setCursorPos(cmd.length);
+
+      setTimeout(() => {
+        inputRef.current?.setSelectionRange(cmd.length, cmd.length);
+      }, 0);
     }
     else if (e.key === "ArrowLeft") {
       e.preventDefault();
       setCursorPos((pos) => Math.max(0, pos - 1));
-      // 同步 real input 光标
       inputRef.current?.setSelectionRange(cursorPos - 1, cursorPos - 1);
     }
     else if (e.key === "ArrowRight") {
@@ -99,7 +109,7 @@ export default function Home() {
     }
   };
 
-  // CSS 設定
+  // CSS setting
   const styles = {
     root: {
       minHeight: '100vh',
@@ -221,8 +231,6 @@ export default function Home() {
           {input.slice(cursorPos + 1) || '\u200b'}
         </span>
 
-
-
         {/* hide input */}
         <input
           ref={inputRef}
@@ -238,8 +246,3 @@ export default function Home() {
     </div>
   );
 }
-
-// function getPromptPath(pathname: string) {
-//   if (pathname === "/") return "C:/";
-//   return `C:${pathname}`;
-// }
