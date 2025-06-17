@@ -1,28 +1,20 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
-import { usePathname, useRouter } from 'next/navigation';
 import { parseCommand } from "../utils/commandParser";
 
 import type { ReactNode } from "react";
 
 export default function Home() {
+  const [pathStack, setPathStack] = useState<string[]>(['']);
+  const promptPath = 'C:' + pathStack.join('/');
   const [input, setInput] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
   const endRef = useRef<HTMLDivElement>(null);
 
    // 這裡呼叫 usePathname
-  const router = useRouter();
-  const pathname = usePathname();
   const [history, setHistory] = useState<
     { cmd: string; output: ReactNode }[]
   >([]);
-
-  const getPromptPath = (pathname: string) => {
-    if (pathname === "/") return "C:/";
-      return `C:${pathname}`;
-  };
-
-  const promptPath = getPromptPath(pathname);
 
   useEffect(() => {
     inputRef.current?.focus({ preventScroll: true });
@@ -43,17 +35,37 @@ export default function Home() {
     }
   }, [history]);
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
-      console.log("User entered command:", input);
       const result = parseCommand(input);
-      setHistory([...history, { cmd: input, output: result.output }]);
-      if (result.redirectTo) {
-        router.push(result.redirectTo);
+      // 假設 parseCommand 只回傳 { cmd, output }，不再有 redirectTo
+      setHistory(prev => [...prev, { cmd: input, output: result.output }]);
+
+      const parts = input.trim().split(/\s+/);
+      if (parts[0] === 'cd') {
+        const target = parts[1] || '';
+        setPathStack(prev => {
+          if (target === '' || target === '/') {
+            // 回到根目錄
+            return [''];
+          } else if (target === '..') {
+            // 上一層
+            return prev.length > 1 ? prev.slice(0, -1) : prev;
+          } else if (target.startsWith('/')) {
+            // 絕對路徑
+            const segs = target.split('/').filter(Boolean);
+            return [''].concat(segs);
+          } else {
+            // 相對路徑，推進去
+            return [...prev, target];
+          }
+        });
       }
+
       setInput("");
     }
   };
+
 
   // CSS 設定
   const styles = {
