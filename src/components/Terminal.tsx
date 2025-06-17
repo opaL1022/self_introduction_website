@@ -13,7 +13,7 @@ export default function Home() {
 
    // 這裡呼叫 usePathname
   const [history, setHistory] = useState<
-    { cmd: string; output: ReactNode }[]
+    { path: String; cmd: string; output: ReactNode }[]
   >([]);
 
   useEffect(() => {
@@ -36,30 +36,15 @@ export default function Home() {
   }, [history]);
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      const result = parseCommand(input);
-      // 假設 parseCommand 只回傳 { cmd, output }，不再有 redirectTo
-      setHistory(prev => [...prev, { cmd: input, output: result.output }]);
+      if (e.key === "Enter") {
+        const result = parseCommand(input, pathStack);
+        setHistory((h) => [
+          ...h,
+          { path: promptPath, cmd: input, output: result.output },
+        ]);
 
-      const parts = input.trim().split(/\s+/);
-      if (parts[0] === 'cd') {
-        const target = parts[1] || '';
-        setPathStack(prev => {
-          if (target === '' || target === '/') {
-            // 回到根目錄
-            return [''];
-          } else if (target === '..') {
-            // 上一層
-            return prev.length > 1 ? prev.slice(0, -1) : prev;
-          } else if (target.startsWith('/')) {
-            // 絕對路徑
-            const segs = target.split('/').filter(Boolean);
-            return [''].concat(segs);
-          } else {
-            // 相對路徑，推進去
-            return [...prev, target];
-          }
-        });
+        if (result.newPathStack) {
+        setPathStack(result.newPathStack);
       }
 
       setInput("");
@@ -146,7 +131,7 @@ export default function Home() {
         {history.map((h, i) => (
           <div key={i}>
             <div style={styles.row}>
-              <span style={styles.prompt}>{promptPath}&gt;_</span>
+              <span style={styles.prompt}>{h.path}&gt;_</span>
               <span>{h.cmd}</span>
             </div>
             <div style={{ marginLeft: 32 }}>{h.output}</div>

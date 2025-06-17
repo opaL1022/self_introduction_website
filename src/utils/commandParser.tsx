@@ -2,12 +2,15 @@ import React from 'react';
 
 export interface CommandResult {
   output: string | React.ReactNode;
-  redirectTo?: string;  // for 'cd'
+  newPathStack?: string[];  // for 'cd'
 }
 
 
 
-export function parseCommand(input: string): CommandResult {
+export function parseCommand(
+  input: string,
+  currentPathStack: string[]
+): CommandResult {
   const [cmd, ...args] = input.trim().split(/\s+/);
 
   switch (cmd) {
@@ -23,11 +26,36 @@ export function parseCommand(input: string): CommandResult {
         )
       };
 
-    case 'cd':
+    case "cd": {
       if (args.length !== 1) {
-        return { output: 'Usage: cd [path]' };
+        return { output: "Usage: cd [path]" };
       }
-      return { output: `Switching to ${args[0]}...`, redirectTo: args[0] };
+      const target = args[0];
+      // 建立 newStack 的邏輯（支援 ../, ./, 絕對 /, 相對）
+      let newStack: string[];
+      if (target.startsWith("/")) {
+        // 絕對路徑
+        const segs = target.split("/").filter(Boolean);
+        newStack = [""].concat(segs);
+      } else if (target === "" || target === "/") {
+        newStack = [""];
+      } else {
+        // 複合相對
+        newStack = [...currentPathStack];
+        for (const seg of target.split("/")) {
+          if (!seg || seg === ".") continue;
+          if (seg === "..") {
+            if (newStack.length > 1) newStack.pop();
+          } else {
+            newStack.push(seg);
+          }
+        }
+      }
+      return {
+        output: `Switched to ${newStack.join("/") || "/"}`,
+        newPathStack: newStack,
+      };
+    }
 
     case 'cat':
       if (args.length !== 1) {
