@@ -3,8 +3,8 @@ import { NextResponse } from "next/server";
 import { promises as fs } from "fs";
 import path from "path";
 
-const EXCLUDED_DIRS = new Set(["fonts"]);     // << 你想排除的目录名
-const ALLOWED_EXTS = /\.(txt|md)$/i;                   // << 你想允许的文件后缀
+// 设定：public/terminal_root 当作我们终端的根
+const VIRTUAL_ROOT = path.join(process.cwd(), "public", "terminal_root");
 
 export async function GET(request: Request) {
   try {
@@ -12,24 +12,19 @@ export async function GET(request: Request) {
     let rel = searchParams.get("path") || "";
     rel = rel.replace(/^\/+/, "");
     if (rel === "" || rel === ".") rel = "";
-    const dir = path.join(process.cwd(), "public", rel);
+
+    // 直接把 rel 接到 VIRTUAL_ROOT 下
+    const dir = path.join(VIRTUAL_ROOT, rel);
+    console.log("reading directory", dir);
 
     const entries = await fs.readdir(dir, { withFileTypes: true });
-    const filtered = entries.filter((d) => {
-      if (d.isDirectory()) {
-        // 目录：只有当它不在排除列表里才保留
-        return !EXCLUDED_DIRS.has(d.name);
-      } else {
-        // 文件：只保留你想要的后缀
-        return ALLOWED_EXTS.test(d.name);
-      }
-    });
 
-    const names = filtered.map((d) =>
-      d.isDirectory() ? d.name + "/" : d.name
-    );
+    const names = entries.map((d) => (d.isDirectory() ? d.name + "/" : d.name));
     return NextResponse.json(names);
   } catch (e: any) {
-    return NextResponse.json({ error: "Cannot list directory: " + e.message }, { status: 400 });
+    return NextResponse.json(
+      { error: "Cannot list directory: " + e.message },
+      { status: 400 }
+    );
   }
 }
