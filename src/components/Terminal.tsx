@@ -35,8 +35,8 @@ export default function Home() {
     }
   }, [history]);
 
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-      if (e.key === "Enter") {
+  const handleKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
         const result = parseCommand(input, pathStack);
         setHistory((h) => [
           ...h,

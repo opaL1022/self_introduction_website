@@ -1,4 +1,5 @@
 import React from 'react';
+import FetchLs from '@/components/FetchLs';
 
 export interface CommandResult {
   output: string | React.ReactNode;
@@ -81,6 +82,17 @@ export function parseCommand(
           <FetchTextFile filePath={filePath} />
         )
       };
+    case "ls": {
+      const target = args[0] || ".";
+      return {
+        output: (
+          <FetchLs
+            pathStack={currentPathStack}
+            target={target}
+          />
+        )
+      };
+    }
 
     default:
       return { output: `Command not found: ${cmd}` };
