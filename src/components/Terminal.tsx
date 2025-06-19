@@ -61,7 +61,7 @@ export default function Home() {
         setPathStack(result.newPathStack);
 
         if (
-          (input.trim() === "clear" || input.trim() === "cls") && result.output === ""
+          (input.trim().toLowerCase() === "cls") && result.output === ""
           ) {
             setHistory([]);
             setPathStack(['']);
