@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 export default function FetchTextFile({ filePath }: { filePath: string }) {
   const [content, setContent] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-
+  const linkStyle = { color: "var(--main-text-color)", textDecoration: "underline" };
   useEffect(() => {
     setContent(null);
     setError(null);
@@ -34,7 +34,7 @@ export default function FetchTextFile({ filePath }: { filePath: string }) {
                 href={url}
                 target="_blank"
                 rel="noopener noreferrer"
-                style={{ color: "#fff", textDecoration: "underline" }}
+                style={{ color: "var(--main-text-color)", textDecoration: "underline" }}
               >
                 {label}
               </a>
