@@ -104,7 +104,7 @@ export async function parseCommand(
         )
       };
     }
-    case "cls": {
+    case "clr": {
     return { output: "", newPathStack: currentPathStack };
   }
   
