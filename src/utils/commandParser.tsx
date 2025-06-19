@@ -26,7 +26,7 @@ export async function parseCommand(
             <div>Available commands:</div>
             <div><span className="text-white">HELP</span> - Show command lists</div>
             <div><span className="text-white">CD route</span> - Switch pages (ex: <span className="text-white">cd /about</span>)</div>
-            <div><span className="text-white">TYPE filename.txt</span> - Show the content of a text file under current route (ex: <span className="text-white">cat about.txt</span>)</div>
+            <div><span className="text-white">TYPE filename.txt</span> - Show the content of a text file under current route (ex: <span className="text-white">type about.txt</span>)</div>
             <div><span className="text-white">CLS</span> - Clear the terminal screen</div>
             <div><span className="text-white">DIR</span> - List all available files and subroutes under current route</div>
             <div><span className="text-white">green</span> - H4ck3r 5tylE</div>
